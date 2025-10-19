@@ -58,18 +58,22 @@ df.columns = df.columns.str.lower()
 print("날짜/시간 컬럼 생성 중...")
 
 # YMD(날짜) + TM(시간) 형식으로 결합 (시간은 6자리로 패딩: HHMMSS)
+# NaN 값 처리를 위해 fillna 사용
 df['신고일시'] = pd.to_datetime(
-    df['dclr_ymd'].astype(str) + df['dclr_tm'].astype(str).str.zfill(6),
+    df['dclr_ymd'].fillna(0).astype(int).astype(str) + 
+    df['dclr_tm'].fillna(0).astype(int).astype(str).str.zfill(6),
     format='%Y%m%d%H%M%S', errors='coerce'
 )
 
 df['출동일시'] = pd.to_datetime(
-    df['dspt_ymd'].astype(str) + df['dspt_tm'].astype(str).str.zfill(6),
+    df['dspt_ymd'].fillna(0).astype(int).astype(str) + 
+    df['dspt_tm'].fillna(0).astype(int).astype(str).str.zfill(6),
     format='%Y%m%d%H%M%S', errors='coerce'
 )
 
 df['현장도착일시'] = pd.to_datetime(
-    df['grnds_arvl_ymd'].astype(str) + df['grnds_arvl_tm'].astype(str).str.zfill(6),
+    df['grnds_arvl_ymd'].fillna(0).astype(int).astype(str) + 
+    df['grnds_arvl_tm'].fillna(0).astype(int).astype(str).str.zfill(6),
     format='%Y%m%d%H%M%S', errors='coerce'
 )
 
@@ -329,6 +333,11 @@ feature_cols = ['신고시간', '신고월', '신고일', '현장거리', '주�
 # 결측치 제거
 ml_df = ml_df[feature_cols + ['응답시간_분']].dropna()
 
+# 대용량 데이터이므로 샘플링 (100만 건으로 제한)
+if len(ml_df) > 1000000:
+    print(f"  데이터 샘플링 : {len(ml_df):,}건 -> 1,000,000건")
+    ml_df = ml_df.sample(n=1000000, random_state=42)
+
 X = ml_df[feature_cols]
 y = ml_df['응답시간_분']
 
@@ -340,12 +349,12 @@ X_train, X_test, y_train, y_test = train_test_split(
 print(f"  학습 데이터 : {len(X_train):,}건")
 print(f"  테스트 데이터 : {len(X_test):,}건")
 
-# 모델 학습
+# 모델 학습 (빠른 실행을 위해 파라미터 조정)
 models = {
     'Linear Regression': LinearRegression(),
-    'Random Forest': RandomForestRegressor(n_estimators=100, max_depth=15, 
+    'Random Forest': RandomForestRegressor(n_estimators=50, max_depth=10, 
                                           random_state=42, n_jobs=-1),
-    'Gradient Boosting': GradientBoostingRegressor(n_estimators=100, max_depth=5, 
+    'Gradient Boosting': GradientBoostingRegressor(n_estimators=50, max_depth=5, 
                                                    random_state=42)
 }
 

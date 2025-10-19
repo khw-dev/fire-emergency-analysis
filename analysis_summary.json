@@ -1,0 +1,29 @@
+{
+  "데이터 개요": {
+    "총 데이터 건수": "12,245,027건",
+    "분석 기간": "2019년 ~ 2023년",
+    "분석 컬럼 수": 95
+  },
+  "기술 통계": {
+    "평균 응답시간": "3.12분",
+    "중앙값 응답시간": "2.38분",
+    "평균 현장도착시간": "10.97분",
+    "골든타임 달성률": "60.41%"
+  },
+  "머신러닝 성능": {
+    "최고 성능 모델": "Random Forest",
+    "R² Score": "0.0815",
+    "RMSE": "4.3124분",
+    "MAE": "1.5888분"
+  },
+  "생성된 시각화": [
+    "timeseries_decomposition.png",
+    "autocorrelation.png",
+    "clustering.png",
+    "machine_learning.png",
+    "correlation_heatmap.png",
+    "outlier_detection.png",
+    "time_region_heatmap.png",
+    "comprehensive_dashboard.png"
+  ]
+}
